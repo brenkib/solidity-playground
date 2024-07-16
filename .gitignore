@@ -20,3 +20,5 @@ logs
 ## Hardhat compiled files
 artifacts
 cache
+coverage
+coverage.json
