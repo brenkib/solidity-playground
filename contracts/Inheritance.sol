@@ -13,6 +13,9 @@ contract Ownable {
         _;
     }
 
+    function withdraw(address payable _to) public virtual onlyOwner {
+        payable(owner).transfer(address(this).balance);
+    }
 }
 
 abstract contract Balances is Ownable {
@@ -20,11 +23,20 @@ abstract contract Balances is Ownable {
         return address(this).balance;
     }
 
-    function withdraw(address payable _to) public onlyOwner {
-        _to.transfer(address(this).balance);
+    // private Not available in childs
+    function withdraw(address payable _to) public virtual onlyOwner {
+        _to.transfer(getBalance());
     }
+
 }
 
 contract Inheritance is Ownable, Balances {
-    
+    constructor (address _owner) Ownable(_owner) {
+
+    }
+
+    function withdraw(address payable _to) public override(Ownable, Balances) onlyOwner {
+        //Balances.withdraw(_to);
+        super.withdraw(_to); // super goes 1 level above in hierarchy
+    }
 }
