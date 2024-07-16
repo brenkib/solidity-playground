@@ -1,0 +1,22 @@
+## Build generated
+build/
+DerivedData/
+
+### JetBrains template
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+# IntelliJ
+out/
+
+## Basics
+.mypy_cache/
+testeth
+.idea
+node_modules
+bin_output
+logs
+
+
+## Hardhat compiled files
+artifacts
+cache
