@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-contract Logger {
+import "./ILogger.sol";
+
+contract Logger is ILogger{
     mapping(address => uint[]) private payments;
 
     function log(address _from, uint _amount) public {
@@ -26,10 +28,10 @@ contract DemoWithLogger {
         logger.log(msg.sender, msg.value);
     }
 
-    Logger internal logger;
+    ILogger internal logger;
 
     constructor(address _logger) {
-        logger = Logger(_logger);
+        logger = ILogger(_logger);
     }
 
     function payment(address _from, uint _number) public view returns(uint)  {

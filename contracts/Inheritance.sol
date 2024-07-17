@@ -13,7 +13,7 @@ contract Ownable {
         _;
     }
 
-    function withdraw(address payable _to) public virtual onlyOwner {
+    function withdraw(address payable) public virtual onlyOwner {
         payable(owner).transfer(address(this).balance);
     }
 }
@@ -23,8 +23,7 @@ abstract contract Balances is Ownable {
         return address(this).balance;
     }
 
-    // private Not available in childs
-    function withdraw(address payable _to) public virtual onlyOwner {
+    function withdraw(address payable _to) public virtual override onlyOwner {
         _to.transfer(getBalance());
     }
 
