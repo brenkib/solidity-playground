@@ -6,8 +6,8 @@ import "./IERC20.sol";
 contract ERC20 is IERC20 {
     uint totalTokens;
     address owner;
-    mapping(address => uint) balances;
-    mapping(address => mapping(address => uint)) allowances;
+    mapping(address => uint) public balances;
+    mapping(address => mapping(address => uint)) public allowances;
     string private _name;
     string private _symbol;
 
@@ -66,11 +66,17 @@ contract ERC20 is IERC20 {
     }
 
     function _transfer(address from, address to, uint value) internal {
-        _beforeTokenTransfer(msg.sender, to, value);
-        balances[msg.sender] -= value;
+        _beforeTokenTransfer(from, to, value);
+        balances[from] -= value;
         balances[to] += value;
 
-        emit Transfer(msg.sender, to, value);
+        console.log(
+            "Transferring from %s to %s %s tokens",
+            from,
+            to,
+            value
+        );
+        emit Transfer(from, to, value);
     }
 
     function allowance(address _owner, address _spender) public view returns(uint) {
@@ -78,15 +84,10 @@ contract ERC20 is IERC20 {
     }
 
     function approve(address spender, uint amount) public {
-       _approve(msg.sender, spender, amount);
-
-    }
-
-    function _approve(address sender, address spender, uint amount) internal virtual {
         allowances[msg.sender][spender] = amount;
-        emit Approve(sender, spender, amount);
-    }
+        emit Approve(msg.sender, spender, amount);
 
+    }
     function transferFrom(address sender, address recipient, uint amount) public enoughTokens(sender, amount) {
         _beforeTokenTransfer(sender, recipient, amount);
         allowances[sender][recipient] -= amount; // error if < 0
@@ -108,6 +109,8 @@ contract BRToken is ERC20 {
     constructor(address shop) ERC20("BRToken", "BR", 20, shop) {}
 }
 
+
+import "hardhat/console.sol";
 /* ERC20 Token shop/distributor/seller */
 contract BRShop {
     IERC20 public token;
@@ -125,9 +128,10 @@ contract BRShop {
     }
 
     function sell(uint _amount) external {
-        require(_amount > 0 && token.balanceOf(msg.sender), "Incorrect amount");
+        require(_amount > 0 && token.balanceOf(msg.sender) > _amount, "Incorrect amount");
         uint allowance = token.allowance(msg.sender, address(this));
-        require(allowance > _amount, "Incorrect allowance");
+
+        require(allowance >= _amount, "Incorrect allowance");
 
         token.transferFrom(msg.sender, address(this), _amount);
 

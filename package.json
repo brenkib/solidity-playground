@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx hardhat test",
+    "test": "npx hardhat compile && npx hardhat test",
     "test-coverage": "npx hardhat coverage",
     "re-compile": "npx hardhat clean && npx hardhat compile",
     "compile": "npx hardhat compile"
