@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./IERC20.sol";
 
-contract ERC is IERC20 {
+contract ERC20 is IERC20 {
     uint totalTokens;
     address owner;
     mapping(address => uint) balances;
@@ -101,4 +101,52 @@ contract ERC is IERC20 {
         uint amount
     ) internal virtual {}
 
+}
+
+
+contract BRToken is ERC20 {
+    constructor(address shop) ERC20("BRToken", "BR", 20, shop) {}
+}
+
+/* ERC20 Token shop/distributor/seller */
+contract BRShop {
+    IERC20 public token;
+    address payable public owner;
+    event Bought(uint _amount, address indexed _buyer);
+    event Sold(uint _amount, address indexed _seller);
+
+    constructor() {
+        token = new BRToken(address(this));
+        owner = payable(msg.sender);
+    }
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not allowed");
+        _;
+    }
+
+    function sell(uint _amount) external {
+        require(_amount > 0 && token.balanceOf(msg.sender), "Incorrect amount");
+        uint allowance = token.allowance(msg.sender, address(this));
+        require(allowance > _amount, "Incorrect allowance");
+
+        token.transferFrom(msg.sender, address(this), _amount);
+
+        // pay to sender
+        payable(msg.sender).transfer(_amount);
+
+        emit Sold(_amount, msg.sender);
+    }
+
+    function tokenBalance() public view returns(uint) {
+        return token.balanceOf(address(this));
+    }
+
+    receive() external payable {
+        uint tokensToBuy = msg.value;
+        require(tokensToBuy > 0, "Not enough funds");
+        require(tokenBalance() >= tokensToBuy, "Not enough tokens");
+
+        token.transfer(msg.sender, tokensToBuy);
+        emit Bought(tokensToBuy, msg.sender);
+    }
 }
