@@ -7,13 +7,15 @@
     "test": "npx hardhat compile && npx hardhat test",
     "test-coverage": "npx hardhat coverage",
     "re-compile": "npx hardhat clean && npx hardhat compile",
-    "compile": "npx hardhat compile"
+    "compile": "npx hardhat compile",
+    "solhint": "solhint 'contracts/**/*.sol'"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.6",
-    "prettier": "^3.3.2"
+    "prettier": "^3.3.2",
+    "solhint": "^5.0.1"
   }
 }

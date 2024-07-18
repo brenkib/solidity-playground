@@ -20,7 +20,7 @@ contract ERC20 is IERC20 {
     }
 
     function decimals() external pure returns(uint) {
-        return 18; // 1 token = 1 wei
+        return 18; // 1 token = 1 wei   0.01 10^decimals,
     }
 
     function totalSupply() external view returns(uint) {
@@ -33,8 +33,13 @@ contract ERC20 is IERC20 {
     }
     modifier onlyOwner() {
         require(msg.sender == owner, "Not allowed");
+        if(msg.sender == owner) {
+            revert CustomError();
+        }
         _;
     }
+
+    error CustomError();
 
     constructor(string memory name, string memory symbol, uint initialSupply, address shop){
         _name = name;
@@ -88,12 +93,12 @@ contract ERC20 is IERC20 {
         emit Approve(msg.sender, spender, amount);
 
     }
-    function transferFrom(address sender, address recipient, uint amount) public enoughTokens(sender, amount) {
+
+    function transferFrom(address sender, address recipient, uint256 amount) public enoughTokens(sender, amount) {
         _beforeTokenTransfer(sender, recipient, amount);
         allowances[sender][recipient] -= amount; // error if < 0
 
         _transfer(sender, recipient, amount);
-
     }
 
     function _beforeTokenTransfer(
