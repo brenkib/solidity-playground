@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "./IERC20.sol";
+import "./ERC20/IERC20.sol";
 
 contract ERC20 is IERC20 {
     uint totalTokens;
